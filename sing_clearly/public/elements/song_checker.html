@@ -37,20 +37,20 @@
 		    
 		    <div class="form-group">
 			<label for="song-title">Title</label>
-			<input type="text" class="form-control" value="{{song.title::input}}" placeholder="I won't give up" autofocus>
+			<input type="text" id="song-title" class="form-control" value="{{song.title::input}}" placeholder="I won't give up" autofocus>
 		    </div>
 		    <div class="form-group">
 			<label for="song-artist">Artist</label>
-			<input type="text" class="form-control" value="{{song.artist::input}}" placeholder="Jason Mraz">
+			<input type="text" id="song-artist" class="form-control" value="{{song.artist::input}}" placeholder="Jason Mraz">
 		    </div>
-		    <button class="btn btn-primary" on-click="go">Check</button>
+		    <button class="btn btn-primary" on-click="go">Check lyrics</button>
 		</div>
 	    </div>
 	</div>
 
 	<div class="card">
 	    <div class="card-body">
-		<h4 class="card-title">Vulgarity analysis for [[score.title]] by [[score.artist]]</h4>
+		<h4 class="card-title">Vulgarity analysis for <i>[[score.title]]</i> by [[score.artist]]</h4>
 		<p>
 		    Number of blacklisted phrases found: [[score.phrase_count]]
 		</p>
@@ -104,6 +104,9 @@
 	 go() {
 	     $.get('/check-song', this.song)
 	      .done(((data) => {
+		  this.set('song.title', "");
+		  this.set('song.artist', "");
+		  $(this.shadowRoot.querySelector('#song-title')).focus();
 		  this.set('score', data);
 	      }).bind(this))
 	      .fail((result) => {
@@ -150,6 +153,11 @@
 	 }
 	 ready() {
 	     super.ready();
+	     $(this.shadowRoot.querySelector('#song-artist')).on('keyup', (e) => {
+		 if (e.keyCode == 13) {
+		     this.go();
+		 }
+	     });
 	 }
      }
      customElements.define(SongChecker.is, SongChecker);
