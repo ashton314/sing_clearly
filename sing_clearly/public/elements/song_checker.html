@@ -3,6 +3,17 @@
 <dom-module id="song-checker">
     <template>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<style>
+	 @keyframes fader {
+	     0% { opacity: 1; }
+	     100% { opacity: 0; }
+	 }
+	 .fade-out {
+	     animation-name: fader;
+	     animation-duration: 1s;
+	     animation-delay: 1s;
+	 }
+	</style>
 
 	<div class="card-deck mb-3">
 	    <div class="card col-md-4 col-12">
@@ -14,6 +25,10 @@
 			<input type="text" class="form-control" value="{{blacklist_phrase::input}}">
 		    </div>
 		    <button class="btn btn-success" on-click="addBlacklist">Add Phrase</button>
+
+		    <div class="alert alert-success mt-3" id="blacklist-add-success-message" style="opacity: 0;">
+			Phrase added to blacklist
+		    </div>
 		</div>
 	    </div>
 	    <div class="card col-md-8 col-12">
@@ -35,15 +50,27 @@
 
 	<div class="card">
 	    <div class="card-body">
-		<h4 class="card-title">Score for [[score.title]] by [[score.artist]]</h4>
-		<p>
-		    Link to lyrics <a href$="[[score.link]]">here</a>.
-		</p>
+		<h4 class="card-title">Vulgarity analysis for [[score.title]] by [[score.artist]]</h4>
 		<p>
 		    Number of blacklisted phrases found: [[score.phrase_count]]
 		</p>
 		<p>
 		    <button class="btn btn-outline-primary" type="button" on-click="togglePhraseListing">View phrases caught</button>
+		    <button class="btn btn-outline-info" type="button" on-click="toggleLyrics">View song lyrics</button>
+
+		    <div class="collapse" id="song-lyrics">
+			<div class="card">
+			    <div class="card-body">
+				<p>
+				    Link to lyrics on MetroLyrics <a href$="[[score.link]]">here</a>.
+				</p>
+				<p>
+				    [[score.text]]
+				</p>
+			    </div>
+			</div>
+		    </div>
+
 		    <div class="collapse" id="phrase-listing">
 			<table class="table">
 			    <thead>
@@ -67,7 +94,12 @@
 	     $.post('/blacklist', {phrase: this.blacklist_phrase},
 		    ((success) => {
 			this.set('blacklist_phrase', '');
-			alert('added'); }).bind(this));
+
+			let message = $(this.shadowRoot.querySelector('#blacklist-add-success-message'));
+			message.css({opacity: 1});
+			message.addClass('fade-out');
+			setTimeout(function () { message.removeClass('fade-out'); message.css({opacity: 0}); }, 2000);
+		    }).bind(this));
 	 }
 	 go() {
 	     $.get('/check-song', this.song)
@@ -80,6 +112,9 @@
 	 }
 	 togglePhraseListing() {
 	     $(this.shadowRoot.querySelector('#phrase-listing')).collapse('toggle');
+	 }
+	 toggleLyrics() {
+	     $(this.shadowRoot.querySelector('#song-lyrics')).collapse('toggle');
 	 }
 
 	 /* Boilerplate */
@@ -99,6 +134,7 @@
 		     value: { phrase_count: "",
 			      phrases: [],
 			      link: "#",
+			      text: "",
 			      title: "",
 			      artist: "" },
 		     notify: true
@@ -110,6 +146,7 @@
 	     this.go = this.go.bind(this);
 	     this.addBlacklist = this.addBlacklist.bind(this);
 	     this.togglePhraseListing = this.togglePhraseListing.bind(this);
+	     this.toggleLyrics = this.toggleLyrics.bind(this);
 	 }
 	 ready() {
 	     super.ready();

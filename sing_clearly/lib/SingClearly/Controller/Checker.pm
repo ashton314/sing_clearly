@@ -30,7 +30,7 @@ sub check {
 
 	my @phrases = ();
 	for my $line (split /\n/, $blacklist) {
-	    if ($text =~ /$line/i) {
+	    if ($text =~ /\b$line\b/i) {
 		push @phrases, $line;
 	    }
 	}
@@ -39,6 +39,7 @@ sub check {
 			     phrase_count => scalar @phrases,
 			     phrases => \@phrases,
 			     link => $link,
+			     text => $text,
 			     title => $otitle,
 			     artist => $oartist });
     }
