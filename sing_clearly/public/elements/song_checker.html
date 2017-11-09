@@ -10,7 +10,7 @@
 		    <h3>Add to Blacklist</h3>
 
 		    <div class="form-group">
-			<label for="bad-phrase">Bad Phrase</label>
+			<label for="bad-phrase">Bad Phrase:</label>
 			<input type="text" class="form-control" value="{{blacklist_phrase::input}}">
 		    </div>
 		    <button class="btn btn-success" on-click="addBlacklist">Add Phrase</button>
@@ -22,11 +22,11 @@
 		    
 		    <div class="form-group">
 			<label for="song-title">Title</label>
-			<input type="text" class="form-control" value="{{song.title::input}}" autofocus>
+			<input type="text" class="form-control" value="{{song.title::input}}" placeholder="I won't give up" autofocus>
 		    </div>
 		    <div class="form-group">
 			<label for="song-artist">Artist</label>
-			<input type="text" class="form-control" value="{{song.artist::input}}">
+			<input type="text" class="form-control" value="{{song.artist::input}}" placeholder="Jason Mraz">
 		    </div>
 		    <button class="btn btn-primary" on-click="go">Check</button>
 		</div>
@@ -37,14 +37,13 @@
 	    <div class="card-body">
 		<h4 class="card-title">Score for [[score.title]] by [[score.artist]]</h4>
 		<p>
-		    Link to lyrics <a href$="[[score.link]]">here</a>
+		    Link to lyrics <a href$="[[score.link]]">here</a>.
 		</p>
 		<p>
 		    Number of blacklisted phrases found: [[score.phrase_count]]
 		</p>
 		<p>
-		    Blacklisted phrases:
-		    <button class="btn btn-primary" type="button" on-click="togglePhraseListing">Toggle</button>
+		    <button class="btn btn-outline-primary" type="button" on-click="togglePhraseListing">View phrases caught</button>
 		    <div class="collapse" id="phrase-listing">
 			<table class="table">
 			    <thead>
