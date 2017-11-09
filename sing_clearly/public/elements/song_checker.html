@@ -4,25 +4,41 @@
     <template>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
 
-	<div class="card mb-1">
-	    <div class="card-body">
-		<h3>Song</h3>
+	<div class="card-deck mb-3">
+	    <div class="card col-md-4 col-12">
+		<div class="card-body">
+		    <h3>Add to Blacklist</h3>
 
-		<div class="form-group">
-		    <label for="song-title">Title</label>
-		    <input type="text" class="form-control" value="{{song.title::input}}">
+		    <div class="form-group">
+			<label for="bad-phrase">Bad Phrase</label>
+			<input type="text" class="form-control" value="{{blacklist_phrase::input}}">
+		    </div>
+		    <button class="btn btn-success" on-click="addBlacklist">Add Phrase</button>
 		</div>
-		<div class="form-group">
-		    <label for="song-artist">Artist</label>
-		    <input type="text" class="form-control" value="{{song.artist::input}}">
+	    </div>
+	    <div class="card col-md-8 col-12">
+		<div class="card-body">
+		    <h3>Song</h3>
+		    
+		    <div class="form-group">
+			<label for="song-title">Title</label>
+			<input type="text" class="form-control" value="{{song.title::input}}" autofocus>
+		    </div>
+		    <div class="form-group">
+			<label for="song-artist">Artist</label>
+			<input type="text" class="form-control" value="{{song.artist::input}}">
+		    </div>
+		    <button class="btn btn-primary" on-click="go">Check</button>
 		</div>
-		<button class="btn btn-primary" on-click="go">Check</button>
 	    </div>
 	</div>
 
 	<div class="card">
 	    <div class="card-body">
 		<h4 class="card-title">Score for [[score.title]] by [[score.artist]]</h4>
+		<p>
+		    Link to lyrics <a href$="[[score.link]]">here</a>
+		</p>
 		<p>
 		    Number of blacklisted phrases found: [[score.phrase_count]]
 		</p>
@@ -48,10 +64,20 @@
     </template>
     <script>
      class SongChecker extends Polymer.Element {
+	 addBlacklist() {
+	     $.post('/blacklist', {phrase: this.blacklist_phrase},
+		    ((success) => {
+			this.set('blacklist_phrase', '');
+			alert('added'); }).bind(this));
+	 }
 	 go() {
-	     $.get('/check-song', this.song, ((data) => {
-		 this.set('score', data);
-	     }).bind(this));
+	     $.get('/check-song', this.song)
+	      .done(((data) => {
+		  this.set('score', data);
+	      }).bind(this))
+	      .fail((result) => {
+		  alert("No songs found.");
+	      });
 	 }
 	 togglePhraseListing() {
 	     $(this.shadowRoot.querySelector('#phrase-listing')).collapse('toggle');
@@ -72,7 +98,8 @@
 		 score: {
 		     type: Object,
 		     value: { phrase_count: "",
-			      phrases: ['one', 'two', 'three'],
+			      phrases: [],
+			      link: "#",
 			      title: "",
 			      artist: "" },
 		     notify: true
@@ -82,6 +109,7 @@
 	 constructor() {
 	     super();
 	     this.go = this.go.bind(this);
+	     this.addBlacklist = this.addBlacklist.bind(this);
 	     this.togglePhraseListing = this.togglePhraseListing.bind(this);
 	 }
 	 ready() {
