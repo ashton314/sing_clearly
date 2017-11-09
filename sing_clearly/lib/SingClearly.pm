@@ -16,6 +16,7 @@ sub startup {
 
   # Normal route to controller
   $r->get('/')->to('example#welcome');
+  $r->get('/checker')->to('UI#checker');
 }
 
 1;

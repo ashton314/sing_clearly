@@ -1,0 +1,64 @@
+<!-- -*- mode: web -*- -->
+
+<dom-module id="song-checker">
+    <template>
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+	<div class="card">
+	    <div class="card-body">
+		<h3>Song</h3>
+
+		<div class="form-group">
+		    <label for="song-title">Title</label>
+		    <input type="text" class="form-control" value="{{song.title::input}}">
+		</div>
+		<div class="form-group">
+		    <label for="song-artist">Artist</label>
+		    <input type="text" class="form-control" value="{{song.artist::input}}">
+		</div>
+		<button class="btn btn-primary" on-click="go">Check</button>
+	    </div>
+	</div>
+
+	<div class="card">
+	    <div class="card-body">
+		(Score for [[song.title]] by [[song.artist]] goes here.)
+	    </div>
+	</div>
+
+    </template>
+    <script>
+     class SongChecker extends Polymer.Element {
+	 go() {
+	     console.log(this.song);
+	 }
+
+	 /* Boilerplate */
+	 static get is() {
+	     return 'song-checker';
+	 }
+	 static get properties() {
+	     return {
+		 song: {
+		     type: Object,
+		     value: { title: "",
+			      artist: "" },
+		     notify: true
+		 },
+		 score: {
+		     type: Object,
+		     notify: true
+		 },
+	     };
+	 }
+	 constructor() {
+	     super();
+	     this.go = this.go.bind(this);
+	 }
+	 ready() {
+	     super.ready();
+	 }
+     }
+     customElements.define(SongChecker.is, SongChecker);
+    </script>
+</dom-module>
