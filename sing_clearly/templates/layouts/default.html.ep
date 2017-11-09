@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head><title><%= title %></title></head>
-  <body><%= content %></body>
+  <head>
+    <title><%= title %></title>
+
+    <script type="text/javascript" src="/bower_components/webcomponentsjs/webcomponents-lite.js">
+    </script>
+    <link rel="import" href="/bower_components/polymer/polymer.html">
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+  </head>
+  <body>
+    <%= content %>
+  </body>
 </html>

@@ -1,13 +1,40 @@
 % layout 'default';
 % title 'Welcome';
-<h2><%= $msg %></h2>
-<p>
-  This page was generated from the template "templates/example/welcome.html.ep"
-  and the layout "templates/layouts/default.html.ep",
-  <%= link_to 'click here' => url_for %> to reload the page or
-  <%= link_to 'here' => '/index.html' %> to move forward to a static page.
-  % if (config 'perldoc') {
-    To learn more, you can also browse through the documentation
-    <%= link_to 'here' => '/perldoc' %>.
-  % }
-</p>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <a class="navbar-brand" href="/">Sing Clearly</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <!-- <ul class="navbar-nav mr-auto"> -->
+    <!--   <li class="nav-item"> -->
+    <!-- 	<a class="nav-link" href="/question-browser">Question Browser</a> -->
+    <!--   </li> -->
+    <!--   <li class="nav-item"> -->
+    <!-- 	<a class="nav-link" href="/test-builder">Test Builder</a> -->
+    <!--   </li> -->
+    <!-- </ul> -->
+    <!-- <form class="form-inline my-2 my-lg-0"> -->
+    <!--   <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"> -->
+    <!--   <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+    <!-- </form> -->
+  </div>
+</nav>
+
+
+<div class="container">
+
+  <div class="jumbotron mt-5">
+    <h1 class="display-3">Sing Clearly</h1>
+    <p class="lead">This is a prototype of a song lyric checker.</p>
+    <hr class="my-4">
+    <p>Going through songs that don't have the best lyrics is no fun. This program helps to filter out the most blatantly bad songs. It is not infallable; there may be false positives and there <strong>will</strong> be false negatives.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="/checker" role="button">Get Started!</a>
+    </p>
+  </div>
+
+
+</div>
