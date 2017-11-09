@@ -4,7 +4,7 @@
     <template>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
 
-	<div class="card">
+	<div class="card mb-1">
 	    <div class="card-body">
 		<h3>Song</h3>
 
@@ -22,7 +22,26 @@
 
 	<div class="card">
 	    <div class="card-body">
-		(Score for [[song.title]] by [[song.artist]] goes here.)
+		<h4 class="card-title">Score for [[score.title]] by [[score.artist]]</h4>
+		<p>
+		    Number of blacklisted phrases found: [[score.phrase_count]]
+		</p>
+		<p>
+		    Blacklisted phrases:
+		    <button class="btn btn-primary" type="button" on-click="togglePhraseListing">Toggle</button>
+		    <div class="collapse" id="phrase-listing">
+			<table class="table">
+			    <thead>
+				<tr><th>Phrase:</th></r>
+			    </thead>
+			    <tbody>
+				<template is="dom-repeat" items="[[score.phrases]]" as="phrase">
+				    <tr><td>[[phrase]]</td></tr>
+				</template>
+			    </tbody>
+			</table>
+		    </div>
+		</p>
 	    </div>
 	</div>
 
@@ -30,7 +49,12 @@
     <script>
      class SongChecker extends Polymer.Element {
 	 go() {
-	     console.log(this.song);
+	     $.get('/check-song', this.song, ((data) => {
+		 this.set('score', data);
+	     }).bind(this));
+	 }
+	 togglePhraseListing() {
+	     $(this.shadowRoot.querySelector('#phrase-listing')).collapse('toggle');
 	 }
 
 	 /* Boilerplate */
@@ -47,6 +71,10 @@
 		 },
 		 score: {
 		     type: Object,
+		     value: { phrase_count: "",
+			      phrases: ['one', 'two', 'three'],
+			      title: "",
+			      artist: "" },
 		     notify: true
 		 },
 	     };
@@ -54,6 +82,7 @@
 	 constructor() {
 	     super();
 	     this.go = this.go.bind(this);
+	     this.togglePhraseListing = this.togglePhraseListing.bind(this);
 	 }
 	 ready() {
 	     super.ready();
