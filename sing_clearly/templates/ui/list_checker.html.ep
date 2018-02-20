@@ -1,7 +1,7 @@
 % layout 'default';
 % title 'Song Checker';
 
-<link rel="import" href="/elements/song_checker.html">
+<link rel="import" href="/elements/list_checker.html">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <a class="navbar-brand" href="/">Sing Clearly</a>
@@ -24,6 +24,6 @@
 
 <div class="container mt-3">
 
-  <h4>List checker goes here</h4>
+  <list-checker></list-checker>
 
 </div>

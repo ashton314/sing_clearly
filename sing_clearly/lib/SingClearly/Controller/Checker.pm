@@ -23,13 +23,10 @@ sub check {
 sub check_list {
     my $c = shift;
 
-    my $share_link = $c->param('list');
-}
-
-sub import_spotify_list {
-    my $c = shift;
-
     my $share_link = $c->param('share_link');
+
+    $c->app->log->debug("Share link: '$share_link'");
+
     my $ua = Mojo::UserAgent->new();
 
     my $res = $ua->get($share_link)->result;
@@ -39,17 +36,20 @@ sub import_spotify_list {
     my @songs = ();
 
     if ($res->is_success) {
-	my @titles = $res->dom->find('.track-name')->map('text');
-	my @artists = $res->dom->find('.artists-albums')->map('text');
+	my @titles = @{$res->dom->find('.track-name')->map('text')};
+	my @artists = @{$res->dom->find('.artists-albums > a:first-child')->map('text')};
 
 	foreach (@titles) {
-	    push @songs, { title => $_,
-			   artist => shift @artists };
+	    my $blob = { title => $_, artist => shift @artists };
+	    $c->app->log->debug("Blob:");
+	    $c->app->log->debug($c->app->dumper($blob));
+	    push @songs, $blob;
 	}
 
 	$c->app->log->info("got following from list:");
 	$c->app->log->info($c->app->dumper(\@songs));
-	$c->render(json => \@songs);
+	my @results = map { my ($status, $data) = $c->check_song($_->{title}, $_->{artist}); $status eq 'ok' ? $data : {title => $_->{title}, artist => $_->{artist}}; } @songs;
+	$c->render(json => \@results);
     }
     else {
 	$c->render(text => "error retrieving list",

@@ -1,6 +1,6 @@
 <!-- -*- mode: web -*- -->
 
-<dom-module id="song-checker">
+<dom-module id="list-checker">
     <template>
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
 	<style>
@@ -33,63 +33,26 @@
 	    </div>
 	    <div class="card col-md-8 col-12">
 		<div class="card-body">
-		    <h3>Song</h3>
+		    <h3>Spotify Playlist</h3>
 		    
 		    <div class="form-group">
-			<label for="song-title">Title</label>
-			<input type="text" id="song-title" class="form-control" value="{{song.title::input}}" placeholder="I won't give up" autofocus>
+			<label for="list-link">List Share Link</label>
+			<input type="text" id="list-link" class="form-control" value="{{share_link::input}}" placeholder="" autofocus>
 		    </div>
-		    <div class="form-group">
-			<label for="song-artist">Artist</label>
-			<input type="text" id="song-artist" class="form-control" value="{{song.artist::input}}" placeholder="Jason Mraz">
-		    </div>
-		    <button class="btn btn-primary" on-click="go">Check lyrics</button>
+		    <button class="btn btn-primary" on-click="go">Check list</button>
 		</div>
 	    </div>
 	</div>
 
 	<div class="card">
 	    <div class="card-body">
-		<h4 class="card-title">Vulgarity analysis for <i>[[score.title]]</i> by [[score.artist]]</h4>
-		<p>
-		    Number of blacklisted phrases found: [[score.phrase_count]]
-		</p>
-		<p>
-		    <button class="btn btn-outline-primary" type="button" on-click="togglePhraseListing">View phrases caught</button>
-		    <button class="btn btn-outline-info" type="button" on-click="toggleLyrics">View song lyrics</button>
-
-		    <div class="collapse" id="song-lyrics">
-			<div class="card">
-			    <div class="card-body">
-				<p>
-				    Link to lyrics on MetroLyrics <a href$="[[score.link]]">here</a>.
-				</p>
-				<p>
-				    [[score.text]]
-				</p>
-			    </div>
-			</div>
-		    </div>
-
-		    <div class="collapse" id="phrase-listing">
-			<table class="table">
-			    <thead>
-				<tr><th>Phrase:</th></r>
-			    </thead>
-			    <tbody>
-				<template is="dom-repeat" items="[[score.phrases]]" as="phrase">
-				    <tr><td>[[phrase]]</td></tr>
-				</template>
-			    </tbody>
-			</table>
-		    </div>
-		</p>
+		Results go here.
 	    </div>
 	</div>
 
     </template>
     <script>
-     class SongChecker extends Polymer.Element {
+     class ListChecker extends Polymer.Element {
 	 addBlacklist() {
 	     $.post('/blacklist', {phrase: this.blacklist_phrase},
 		    ((success) => {
@@ -102,13 +65,15 @@
 		    }).bind(this));
 	 }
 	 go() {
-	     console.log('song', this.song);
-	     $.get('/check-song', this.song)
+	     let data = {share_link: this.share_link};
+	     console.log('data to server', data);
+	     $.get('/check-listing', data)
 	      .done(((data) => {
-		  this.set('song.title', "");
-		  this.set('song.artist', "");
-		  $(this.shadowRoot.querySelector('#song-title')).focus();
-		  this.set('score', data);
+		  this.set('share_link', "");
+		  $(this.shadowRoot.querySelector('#list-link')).focus();
+		  console.log('data returned', data);
+		  /* this.set('score', data);*/
+		  /* TODO: do something with the data*/
 	      }).bind(this))
 	      .fail((result) => {
 		  alert("No songs found.");
@@ -123,26 +88,11 @@
 
 	 /* Boilerplate */
 	 static get is() {
-	     return 'song-checker';
+	     return 'list-checker';
 	 }
 	 static get properties() {
 	     return {
-		 song: {
-		     type: Object,
-		     value: { title: "",
-			      artist: "" },
-		     notify: true
-		 },
-		 score: {
-		     type: Object,
-		     value: { phrase_count: "-",
-			      phrases: [],
-			      link: "#",
-			      text: "(song text goes here)",
-			      title: "",
-			      artist: "" },
-		     notify: true
-		 },
+		 share_link: String
 	     };
 	 }
 	 constructor() {
@@ -161,6 +111,6 @@
 	     });
 	 }
      }
-     customElements.define(SongChecker.is, SongChecker);
+     customElements.define(ListChecker.is, ListChecker);
     </script>
 </dom-module>
