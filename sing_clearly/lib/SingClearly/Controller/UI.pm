@@ -5,4 +5,10 @@ sub checker {
     my $c = shift;
     $c->render(template => 'ui/checker');
 }
+
+sub list_checker {
+    my $c = shift;
+    $c->render(template => 'ui/list_checker');
+}
+
 1;

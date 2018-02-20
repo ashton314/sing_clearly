@@ -10,41 +10,49 @@ sub check {
     my $otitle = $c->param('title');
     my $oartist = $c->param('artist');
 
-    my $title = lc($otitle);
-    my $artist = lc($oartist);
-
-    $title =~ s/ /-/g;
-    $title =~ s/'/a/g;
-    $artist =~ s/ /-/g;
-
-    $c->app->log->info("Request for title '$title' and artist '$artist'");
-
-    my $ua = Mojo::UserAgent->new();
-
-    my $link = "http://www.metrolyrics.com/$title-lyrics-$artist.html";
-    my $res = $ua->get($link)->result;
-
-    if ($res->is_success) {
-	my $text = $res->dom->find('.verse')->map('text')->join("\n");
-	my $blacklist = Mojo::File->new($c->config->{blacklist_path})->slurp();
-
-	my @phrases = ();
-	for my $line (split /\n/, $blacklist) {
-	    if ($text =~ /\b$line\b/i) {
-		push @phrases, $line;
-	    }
-	}
-
-	$c->render(json => { lyrics => $text,
-			     phrase_count => scalar @phrases,
-			     phrases => \@phrases,
-			     link => $link,
-			     text => $text,
-			     title => $otitle,
-			     artist => $oartist });
+    my ($status, $data) = $c->check_song($otitle, $oartist);
+    if ($status eq 'ok') {
+	$c->render(json => $data);
     }
     else {
-	$c->render(text => "could not find song",
+	$c->render(text => 'error',
+		   status => 400);
+    }
+}
+
+sub check_list {
+    my $c = shift;
+
+    my $share_link = $c->param('list');
+}
+
+sub import_spotify_list {
+    my $c = shift;
+
+    my $share_link = $c->param('share_link');
+    my $ua = Mojo::UserAgent->new();
+
+    my $res = $ua->get($share_link)->result;
+
+    $c->app->log->info("downloading shared list: $share_link");
+
+    my @songs = ();
+
+    if ($res->is_success) {
+	my @titles = $res->dom->find('.track-name')->map('text');
+	my @artists = $res->dom->find('.artists-albums')->map('text');
+
+	foreach (@titles) {
+	    push @songs, { title => $_,
+			   artist => shift @artists };
+	}
+
+	$c->app->log->info("got following from list:");
+	$c->app->log->info($c->app->dumper(\@songs));
+	$c->render(json => \@songs);
+    }
+    else {
+	$c->render(text => "error retrieving list",
 		   status => 400);
     }
 }
