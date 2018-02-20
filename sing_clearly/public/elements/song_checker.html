@@ -50,10 +50,14 @@
 
 	<div class="card">
 	    <div class="card-body">
-		<h4 class="card-title">Vulgarity analysis for <i>[[score.title]]</i> by [[score.artist]]</h4>
-		<p>
-		    Number of blacklisted phrases found: [[score.phrase_count]]
-		</p>
+		<div class="row justify-content-between">
+		    <div class="col-auto">
+			<h4 class="card-title d-inline-block">Vulgarity analysis for <i>[[score.title]]</i> by [[score.artist]]</h4>
+		    </div>
+		    <div class="col-auto">
+			<h4 class="card-title d-line-block"><span class$="badge [[_get_class(score.phrase_count)]]">[[score.phrase_count]]</span></h4>
+		    </div>
+		</div>
 		<p>
 		    <button class="btn btn-outline-primary" type="button" on-click="togglePhraseListing">View phrases caught</button>
 		    <button class="btn btn-outline-info" type="button" on-click="toggleLyrics">View song lyrics</button>
@@ -90,6 +94,17 @@
     </template>
     <script>
      class SongChecker extends Polymer.Element {
+	 _get_class(cnt) {
+	     if (cnt < 1) {
+		 return 'badge-success';
+	     }
+	     else if (cnt <= 2) {
+		 return 'badge-warning text-white';
+	     }
+	     else {
+		 return 'badge-danger';
+	     }
+	 }
 	 addBlacklist() {
 	     $.post('/blacklist', {phrase: this.blacklist_phrase},
 		    ((success) => {

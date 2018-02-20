@@ -44,26 +44,26 @@
 	    </div>
 	</div>
 
-	<div class="card">
+	<div class="card my-1">
 	    <div class="card-body">
 
 		<template is="dom-repeat" items="[[results]]" as="res">
 		    <div class="row">
 			<div class="col">
 
-			    <div class="card">
-				<div class="card-body">
+			    <div class="card my-1">
+				<div class="card-body p-2">
 				    <div class="row justify-content-between">
 					<div class="col-auto">
-					    <h4 class="card-title d-inline-block"><a href$="[[res.link]]">[[res.title]]</a> by [[res.artist]]</h4>
+					    <h5 class="card-title d-inline-block"><a href$="[[res.link]]">[[res.title]]</a> by [[res.artist]]</h5>
 					</div>
 					<div class="col-auto">
-					    <h4 class="card-title d-inline-block"><span class$="badge [[_get_class(res.phrase_count)]]">[[res.phrase_count]]</span></h4>
+					    <h5 class="card-title d-inline-block"><span class$="badge [[_get_class(res.phrase_count)]]">[[res.phrase_count]]</span></h5>
 					</div>
 				    </div>
 				    <div class="row">
 					<div class="col col-lg-4">
-					    <button class="btn btn-outline-primary btn-block" type="button" data-target="[[_gen_phrase_id(index)]]" on-click="togglePhraseListing">Phrases</button>
+					    <button class="btn btn-sm btn-outline-primary btn-block" type="button" data-target="[[_gen_phrase_id(index)]]" on-click="togglePhraseListing">Phrases</button>
 					    <div class="collapse" id$="[[_gen_phrase_id(index)]]">
 						<table class="table">
 						    <thead>
@@ -78,7 +78,7 @@
 					    </div><!-- .collapse -->
 					</div>
 					<div class="col col-lg-8">
-					    <button class="btn btn-outline-primary btn-block" type="button" data-target="[[_gen_lyric_id(index)]]" on-click="toggleLyricListing">Lyrics</button>
+					    <button class="btn btn-sm btn-outline-primary btn-block" type="button" data-target="[[_gen_lyric_id(index)]]" on-click="toggleLyricListing">Lyrics</button>
 					    <div class="collapse" id$="[[_gen_lyric_id(index)]]">
 						<pre>
 						[[res.text]]

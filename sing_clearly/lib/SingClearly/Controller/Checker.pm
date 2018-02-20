@@ -41,13 +41,9 @@ sub check_list {
 
 	foreach (@titles) {
 	    my $blob = { title => $_, artist => shift @artists };
-	    $c->app->log->debug("Blob:");
-	    $c->app->log->debug($c->app->dumper($blob));
 	    push @songs, $blob;
 	}
 
-	$c->app->log->info("got following from list:");
-	$c->app->log->info($c->app->dumper(\@songs));
 	my @results = map { my ($status, $data) = $c->check_song($_->{title}, $_->{artist}); $status eq 'ok' ? $data : {title => $_->{title}, artist => $_->{artist}}; } @songs;
 	$c->render(json => \@results);
     }
