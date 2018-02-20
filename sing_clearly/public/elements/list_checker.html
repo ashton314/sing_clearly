@@ -70,17 +70,19 @@
 							<tr><th>Phrase</th></tr>
 						    </thead>
 						    <tbody>
-							<template is="tom-repeat" items="[[res.phrases]]" as="phrase">
+							<template is="dom-repeat" items="[[res.phrases]]" as="phrase">
 							    <tr><td>[[phrase]]</td></tr>
 							</template>
 						    </tbody>
 						</table>
 					    </div><!-- .collapse -->
 					</div>
-					<div class="col col-lg-4">
+					<div class="col col-lg-8">
 					    <button class="btn btn-outline-primary btn-block" type="button" data-target="[[_gen_lyric_id(index)]]" on-click="toggleLyricListing">Lyrics</button>
 					    <div class="collapse" id$="[[_gen_lyric_id(index)]]">
+						<pre>
 						[[res.text]]
+						</pre>
 					    </div>
 					</div>
 				    </div><!-- .row -->
@@ -97,12 +99,12 @@
     </template>
     <script>
      class ListChecker extends Polymer.Element {
-	 _get_phrase_count(cnt) {
+	 _get_class(cnt) {
 	     if (cnt < 1) {
 		 return 'badge-success';
 	     }
 	     else if (cnt <= 2) {
-		 return 'badge-warning';
+		 return 'badge-warning text-white';
 	     }
 	     else {
 		 return 'badge-danger';
