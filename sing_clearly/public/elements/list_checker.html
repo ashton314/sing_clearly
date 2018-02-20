@@ -46,13 +46,74 @@
 
 	<div class="card">
 	    <div class="card-body">
-		Results go here.
+
+		<template is="dom-repeat" items="[[results]]" as="res">
+		    <div class="row">
+			<div class="col">
+
+			    <div class="card">
+				<div class="card-body">
+				    <div class="row justify-content-between">
+					<div class="col-auto">
+					    <h4 class="card-title d-inline-block"><a href$="[[res.link]]">[[res.title]]</a> by [[res.artist]]</h4>
+					</div>
+					<div class="col-auto">
+					    <h4 class="card-title d-inline-block"><span class$="badge [[_get_class(res.phrase_count)]]">[[res.phrase_count]]</span></h4>
+					</div>
+				    </div>
+				    <div class="row">
+					<div class="col col-lg-4">
+					    <button class="btn btn-outline-primary btn-block" type="button" data-target="[[_gen_phrase_id(index)]]" on-click="togglePhraseListing">Phrases</button>
+					    <div class="collapse" id$="[[_gen_phrase_id(index)]]">
+						<table class="table">
+						    <thead>
+							<tr><th>Phrase</th></tr>
+						    </thead>
+						    <tbody>
+							<template is="tom-repeat" items="[[res.phrases]]" as="phrase">
+							    <tr><td>[[phrase]]</td></tr>
+							</template>
+						    </tbody>
+						</table>
+					    </div><!-- .collapse -->
+					</div>
+					<div class="col col-lg-4">
+					    <button class="btn btn-outline-primary btn-block" type="button" data-target="[[_gen_lyric_id(index)]]" on-click="toggleLyricListing">Lyrics</button>
+					    <div class="collapse" id$="[[_gen_lyric_id(index)]]">
+						[[res.text]]
+					    </div>
+					</div>
+				    </div><!-- .row -->
+				</div>
+			    </div><!-- .card -->
+
+			</div>
+		    </div><!-- .row -->
+		</template>
+
 	    </div>
 	</div>
 
     </template>
     <script>
      class ListChecker extends Polymer.Element {
+	 _get_phrase_count(cnt) {
+	     if (cnt < 1) {
+		 return 'badge-success';
+	     }
+	     else if (cnt <= 2) {
+		 return 'badge-warning';
+	     }
+	     else {
+		 return 'badge-danger';
+	     }
+	 }
+	 _gen_lyric_id(idx) {
+	     return `lyric_collapse_${idx}`;
+	 }
+	 _gen_phrase_id(idx) {
+	     return `phrase_collapse_${idx}`;
+	 }
 	 addBlacklist() {
 	     $.post('/blacklist', {phrase: this.blacklist_phrase},
 		    ((success) => {
@@ -72,18 +133,19 @@
 		  this.set('share_link', "");
 		  $(this.shadowRoot.querySelector('#list-link')).focus();
 		  console.log('data returned', data);
-		  /* this.set('score', data);*/
-		  /* TODO: do something with the data*/
+		  this.set('results', data);
 	      }).bind(this))
 	      .fail((result) => {
 		  alert("No songs found.");
 	      });
 	 }
-	 togglePhraseListing() {
-	     $(this.shadowRoot.querySelector('#phrase-listing')).collapse('toggle');
+	 togglePhraseListing(e) {
+	     let target = this._gen_phrase_id(e.model.get('index'));
+	     $(this.shadowRoot.querySelector(`#${target}`)).collapse('toggle');
 	 }
-	 toggleLyrics() {
-	     $(this.shadowRoot.querySelector('#song-lyrics')).collapse('toggle');
+	 toggleLyricListing(e) {
+	     let target = this._gen_lyric_id(e.model.get('index'));
+	     $(this.shadowRoot.querySelector(`#${target}`)).collapse('toggle');
 	 }
 
 	 /* Boilerplate */
@@ -92,7 +154,8 @@
 	 }
 	 static get properties() {
 	     return {
-		 share_link: String
+		 share_link: String,
+		 results: Array
 	     };
 	 }
 	 constructor() {
@@ -100,7 +163,7 @@
 	     this.go = this.go.bind(this);
 	     this.addBlacklist = this.addBlacklist.bind(this);
 	     this.togglePhraseListing = this.togglePhraseListing.bind(this);
-	     this.toggleLyrics = this.toggleLyrics.bind(this);
+	     this.toggleLyricListing = this.toggleLyricListing.bind(this);
 	 }
 	 ready() {
 	     super.ready();
